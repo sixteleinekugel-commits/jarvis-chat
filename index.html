@@ -5,10 +5,12 @@
 <title>Mistral AI</title>
 
 <style>
+* { box-sizing: border-box; }
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
+  font-family: system-ui;
+  background: #0b0f19;
   color: white;
   display: flex;
   flex-direction: column;
@@ -16,12 +18,22 @@ body {
 }
 
 header {
-  padding: 15px;
-  text-align: center;
-  background: #020617;
-  font-size: 20px;
-  font-weight: bold;
-  border-bottom: 1px solid #1e293b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(20, 25, 40, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #1f2937;
+}
+
+header button {
+  background: #ef4444;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
 }
 
 #chat {
@@ -31,27 +43,43 @@ header {
 }
 
 .message {
-  max-width: 70%;
-  padding: 12px 16px;
-  margin: 10px 0;
-  border-radius: 15px;
-  line-height: 1.4;
+  display: flex;
+  margin-bottom: 15px;
+  align-items: flex-start;
 }
 
-.user {
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.user-avatar { background: #2563eb; }
+.bot-avatar { background: #10b981; }
+
+.bubble {
+  padding: 12px 15px;
+  border-radius: 15px;
+  max-width: 75%;
+  line-height: 1.5;
+}
+
+.user .bubble {
   background: #2563eb;
   margin-left: auto;
 }
 
-.bot {
-  background: #1e293b;
+.bot .bubble {
+  background: #1f2937;
 }
 
 #input-area {
   display: flex;
   padding: 15px;
-  background: #020617;
-  border-top: 1px solid #1e293b;
+  background: rgba(20,25,40,0.8);
+  border-top: 1px solid #1f2937;
 }
 
 input {
@@ -59,99 +87,152 @@ input {
   padding: 12px;
   border-radius: 10px;
   border: none;
-  outline: none;
-  background: #1e293b;
+  background: #1f2937;
   color: white;
 }
 
-button {
+button.send {
   margin-left: 10px;
   padding: 12px 20px;
-  border: none;
   border-radius: 10px;
+  border: none;
   background: #2563eb;
   color: white;
   cursor: pointer;
 }
 
-button:hover {
-  background: #1d4ed8;
+button.send:disabled {
+  background: #555;
+}
+
+.typing {
+  opacity: 0.6;
+  font-style: italic;
 }
 </style>
-
 </head>
 
 <body>
 
-<header>🤖 Mistral AI</header>
+<header>
+  <div>🤖 Mistral AI</div>
+  <button onclick="clearChat()">Reset</button>
+</header>
 
 <div id="chat"></div>
 
 <div id="input-area">
   <input id="prompt" placeholder="Écris ton message..." />
-  <button onclick="sendMessage()">Envoyer</button>
+  <button class="send" onclick="sendMessage()">Envoyer</button>
 </div>
 
 <script>
 const API_URL = "https://remedies-completion-perceived-conscious.trycloudflare.com/v1/chat/completions";
 
-let messages = [];
+let messages = JSON.parse(localStorage.getItem("chat")) || [];
 
-function addMessage(text, type) {
-  const chat = document.getElementById("chat");
-  const div = document.createElement("div");
-  div.className = "message " + type;
-  div.innerText = text;
-  chat.appendChild(div);
+const chat = document.getElementById("chat");
+
+function saveChat() {
+  localStorage.setItem("chat", JSON.stringify(messages));
+}
+
+function createMessage(text, role, typing=false) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "message " + role;
+
+  const avatar = document.createElement("div");
+  avatar.className = "avatar " + (role === "user" ? "user-avatar" : "bot-avatar");
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  if (typing) bubble.classList.add("typing");
+  bubble.innerText = text;
+
+  if (role === "user") {
+    wrapper.appendChild(bubble);
+    wrapper.appendChild(avatar);
+  } else {
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(bubble);
+  }
+
+  chat.appendChild(wrapper);
   chat.scrollTop = chat.scrollHeight;
+
+  return bubble;
+}
+
+function renderHistory() {
+  chat.innerHTML = "";
+  messages.forEach(m => {
+    createMessage(m.content, m.role === "user" ? "user" : "bot");
+  });
 }
 
 async function sendMessage() {
   const input = document.getElementById("prompt");
+  const btn = document.querySelector(".send");
+
   const text = input.value.trim();
   if (!text) return;
 
-  addMessage(text, "user");
-  input.value = "";
-
+  createMessage(text, "user");
   messages.push({ role: "user", content: text });
+  saveChat();
 
-  const loadingId = Date.now();
-  addMessage("⏳ L'IA réfléchit...", "bot");
+  input.value = "";
+  btn.disabled = true;
+
+  const typingBubble = createMessage("L'IA écrit...", "bot", true);
 
   try {
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        messages: messages,
-        temperature: 0.7
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages, temperature: 0.7 })
     });
 
     const data = await res.json();
-
-    // supprime le message "loading"
-    document.getElementById("chat").lastChild.remove();
-
     const reply = data.choices[0].message.content;
 
-    addMessage(reply, "bot");
+    typingBubble.innerText = "";
+    
+    // effet écriture
+    let i = 0;
+    const speed = 15;
+    function type() {
+      if (i < reply.length) {
+        typingBubble.innerText += reply.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      }
+    }
+    type();
+
     messages.push({ role: "assistant", content: reply });
+    saveChat();
 
   } catch (err) {
-    document.getElementById("chat").lastChild.remove();
-    addMessage("❌ Erreur serveur", "bot");
+    typingBubble.innerText = "❌ Erreur serveur";
     console.error(err);
   }
+
+  btn.disabled = false;
 }
 
-// envoyer avec Entrée
-document.getElementById("prompt").addEventListener("keypress", function(e) {
+function clearChat() {
+  messages = [];
+  saveChat();
+  chat.innerHTML = "";
+}
+
+document.getElementById("prompt").addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage();
 });
+
+// chargement historique
+renderHistory();
 </script>
 
 </body>
