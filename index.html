@@ -1535,11 +1535,6 @@ function voiceModeNewChat() {
   setVoiceState("idle");
 }
 
-function stopSpeaking() {
-  if (synthesis && synthesis.speaking) synthesis.cancel();
-  isSpeaking = false;
-}
-
 /* ---- Speech Recognition — multilingual ---- */
 function buildRecognition(lang) {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1752,11 +1747,40 @@ function pickBestVoice(bcp47) {
   return voices.find(v => v.lang.toLowerCase().startsWith(primary)) || null;
 }
 
-function speakText(text, langCode, onDone) {
-  if (!synthesis) { if (onDone) onDone(); setVoiceState("idle"); return; }
-  synthesis.cancel();
+/* ════════════════════════════════════════════════════════
+   TTS ENGINE
+   Primary:  Google Translate TTS (same voice as Google Chrome desktop)
+             — works on ALL devices, no API key, natural accent
+   Fallback: Web Speech API (when Google TTS fetch fails)
+════════════════════════════════════════════════════════ */
 
-  // Clean markdown — identical to Listen button
+// Map 2-letter lang code → Google TTS lang tag
+const GTTS_LANG = {
+  fr:"fr","fr-FR":"fr","fr-CA":"fr",
+  en:"en","en-US":"en","en-GB":"en",
+  es:"es","es-ES":"es","es-MX":"es",
+  de:"de","de-DE":"de",
+  it:"it","it-IT":"it",
+  pt:"pt","pt-PT":"pt","pt-BR":"pt",
+  ar:"ar","ar-SA":"ar",
+  zh:"zh-CN","zh-CN":"zh-CN","zh-TW":"zh-TW",
+  ja:"ja","ja-JP":"ja",
+  ko:"ko","ko-KR":"ko",
+  ru:"ru","ru-RU":"ru",
+  nl:"nl","nl-NL":"nl",
+  pl:"pl","pl-PL":"pl",
+  tr:"tr","tr-TR":"tr",
+  sv:"sv","sv-SE":"sv",
+};
+
+function gttsLang(bcp47) {
+  if (!bcp47) return "fr";
+  return GTTS_LANG[bcp47] || GTTS_LANG[bcp47.slice(0,2)] || "fr";
+}
+
+// Split text into chunks ≤ 200 chars (Google TTS URL limit)
+function splitChunks(text, maxLen = 190) {
+  // First clean markdown
   const clean = text
     .replace(/\*\*(.+?)\*\*/gs, "$1")
     .replace(/\*(.+?)\*/gs, "$1")
@@ -1768,66 +1792,161 @@ function speakText(text, langCode, onDone) {
     .replace(/\s{2,}/g, " ")
     .trim();
 
-  if (!clean) { if (onDone) onDone(); setVoiceState("idle"); return; }
+  if (!clean) return [];
 
-  // Split into natural chunks — max 180 chars to avoid cutoff on iOS
-  const rawSentences = clean.match(/[^.!?…;:]+[.!?…;:]+(?:\s|$)|[^.!?…;:]+$/g) || [clean];
+  const sentences = clean.match(/[^.!?…;]+[.!?…;]+(?:\s|$)|[^.!?…;]+$/g) || [clean];
   const chunks = [];
-  for (const s of rawSentences) {
-    const trimmed = s.trim();
-    if (!trimmed) continue;
-    // If a sentence is very long, split at commas too
-    if (trimmed.length > 180) {
-      const sub = trimmed.match(/[^,]+,?/g) || [trimmed];
-      sub.forEach(p => { if (p.trim()) chunks.push(p.trim()); });
+  let buf = "";
+
+  for (const s of sentences) {
+    const t = s.trim();
+    if (!t) continue;
+    if ((buf + " " + t).trim().length <= maxLen) {
+      buf = (buf + " " + t).trim();
     } else {
-      chunks.push(trimmed);
-    }
-  }
-  if (!chunks.length) { if (onDone) onDone(); setVoiceState("idle"); return; }
-
-  function runSpeak(voice) {
-    let idx = 0;
-    let started = false;
-
-    function next() {
-      if (idx >= chunks.length) {
-        setVoiceState("idle");
-        document.getElementById("vo-live-text").textContent = "";
-        if (onDone) onDone();
-        return;
+      if (buf) chunks.push(buf);
+      // If single sentence too long, break at commas
+      if (t.length > maxLen) {
+        const parts = t.match(/[^,]+,?/g) || [t];
+        let tmp = "";
+        for (const p of parts) {
+          if ((tmp + p).length <= maxLen) { tmp += p; }
+          else { if (tmp) chunks.push(tmp.trim()); tmp = p; }
+        }
+        if (tmp) buf = tmp.trim();
+        else buf = "";
+      } else {
+        buf = t;
       }
-      const chunk = chunks[idx++];
-
-      const utt   = new SpeechSynthesisUtterance(chunk);
-      utt.lang    = langCode || "en-US";
-      utt.rate    = 0.95;   // slightly slower = more natural, less robotic
-      utt.pitch   = 1.0;
-      utt.volume  = 1.0;
-      if (voice) utt.voice = voice;
-
-      utt.onstart = () => { if (!started) { started = true; setVoiceState("speaking"); } };
-      utt.onend   = next;
-      utt.onerror = (e) => {
-        // on iOS "interrupted" is normal between chunks — continue
-        if (e.error !== "canceled") next();
-      };
-
-      synthesis.speak(utt);
     }
-
-    next();
   }
+  if (buf) chunks.push(buf);
+  return chunks;
+}
 
-  // Wait for voices to load if not ready yet (Chrome async)
-  const voices = synthesis.getVoices();
-  if (voices.length) {
-    runSpeak(pickBestVoice(langCode));
+// Build Google TTS URL for a chunk
+function gttsUrl(chunk, lang) {
+  const l = gttsLang(lang);
+  const q = encodeURIComponent(chunk);
+  return `https://translate.google.com/translate_tts?ie=UTF-8&q=${q}&tl=${l}&client=tw-ob&ttsspeed=0.9`;
+}
+
+// Current audio element for voice mode
+let currentAudio = null;
+let voiceAborted = false;
+
+async function speakText(text, langCode, onDone) {
+  // Stop any ongoing speech
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (synthesis && synthesis.speaking) synthesis.cancel();
+  voiceAborted = false;
+
+  const chunks = splitChunks(text);
+  if (!chunks.length) { setVoiceState("idle"); if (onDone) onDone(); return; }
+
+  setVoiceState("speaking");
+
+  // Try Google TTS first (best quality, works on all devices)
+  const success = await playGoogleTTS(chunks, langCode);
+
+  if (!success && !voiceAborted) {
+    // Fallback to Web Speech API
+    playWebSpeech(chunks, langCode, onDone);
   } else {
-    synthesis.addEventListener("voiceschanged", () => {
-      runSpeak(pickBestVoice(langCode));
-    }, { once: true });
+    setVoiceState("idle");
+    document.getElementById("vo-live-text").textContent = "";
+    if (onDone) onDone();
   }
+}
+
+async function playGoogleTTS(chunks, lang) {
+  for (let i = 0; i < chunks.length; i++) {
+    if (voiceAborted) return true;
+
+    const url = gttsUrl(chunks[i], lang);
+
+    try {
+      // Fetch audio as blob to avoid CORS issues on some browsers
+      const res = await fetch(url, { headers: { "Referer": "https://translate.google.com/" } });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      await new Promise((resolve, reject) => {
+        if (voiceAborted) { resolve(); return; }
+        const audio = new Audio(blobUrl);
+        currentAudio = audio;
+        audio.playbackRate = 1.05;
+        audio.onended  = () => { URL.revokeObjectURL(blobUrl); resolve(); };
+        audio.onerror  = () => { URL.revokeObjectURL(blobUrl); reject(); };
+        audio.play().catch(reject);
+      });
+    } catch {
+      return false; // Signal failure → fallback to Web Speech
+    }
+  }
+  return true;
+}
+
+function playWebSpeech(chunks, langCode, onDone) {
+  if (!synthesis) { setVoiceState("idle"); if (onDone) onDone(); return; }
+
+  const voices = synthesis.getVoices();
+  const voice  = pickBestVoice(langCode);
+  let idx = 0;
+
+  function next() {
+    if (voiceAborted || idx >= chunks.length) {
+      setVoiceState("idle");
+      document.getElementById("vo-live-text").textContent = "";
+      if (onDone) onDone();
+      return;
+    }
+    const chunk = chunks[idx++];
+    const utt   = new SpeechSynthesisUtterance(chunk);
+    utt.lang    = langCode || "fr-FR";
+    utt.rate    = 0.95;
+    utt.pitch   = 1.0;
+    if (voice) utt.voice = voice;
+    utt.onend   = next;
+    utt.onerror = next;
+    synthesis.speak(utt);
+  }
+
+  if (voices.length) { next(); }
+  else { synthesis.addEventListener("voiceschanged", next, { once: true }); }
+}
+
+function pickBestVoice(bcp47) {
+  if (!synthesis) return null;
+  const voices = synthesis.getVoices();
+  if (!voices.length) return null;
+  const primary = (bcp47 || "fr").slice(0, 2).toLowerCase();
+
+  function score(v) {
+    const n = v.name.toLowerCase();
+    const l = v.lang.toLowerCase();
+    if (!l.startsWith(primary)) return -1;
+    let s = 0;
+    if (n.includes("google")) s += 20;
+    if (n.includes("wavenet") || n.includes("neural") || n.includes("premium")) s += 15;
+    if (n.includes("natural") || n.includes("enhanced")) s += 8;
+    if (l === (bcp47 || "").toLowerCase()) s += 5;
+    if (v.localService) s += 2;
+    if (n.includes("compact") || n.includes("espeak") || n.includes("mbrola")) s -= 20;
+    return s;
+  }
+
+  const best = voices.map(v => ({ v, s: score(v) })).filter(x => x.s >= 0).sort((a,b) => b.s - a.s);
+  return best.length ? best[0].v : voices.find(v => v.lang.toLowerCase().startsWith(primary)) || null;
+}
+
+function stopSpeaking() {
+  voiceAborted = true;
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (synthesis && synthesis.speaking) synthesis.cancel();
+  isSpeaking = false;
+  setVoiceState("idle");
 }
 
 /* ---- Inline mic in input bar ---- */
