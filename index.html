@@ -1451,7 +1451,7 @@ function setVoiceState(state) {
   overlay.classList.add(state);
 
   if (state === "idle") {
-    statusEl.textContent = "Tap the mic to speak";
+    statusEl.textContent = voiceActive ? "Tap the mic to speak" : "Tap the mic to speak";
     isListening = false; isSpeaking = false;
     animateWave(false);
   } else if (state === "listening") {
@@ -1617,6 +1617,7 @@ function toggleVoiceMic() {
     stopListening();
     setVoiceState("idle");
   } else {
+    voiceAborted = false; // reset so auto-listen works after a manual Stop
     // MUST unlock TTS synchronously here — this is the user gesture
     unlockTTS();
     startListening(async text => {
@@ -1655,7 +1656,21 @@ async function sendVoiceMessage(text) {
     const replyEntry    = LANG_VOICE_HINTS[replyLangCode];
     const replyBcp47    = replyEntry ? replyEntry.lang : (detectedLang || "en-US");
 
-    speakText(reply, replyBcp47);
+    speakText(reply, replyBcp47, () => {
+      // Auto-listen when AI finishes — only if voice mode still open and not aborted
+      if (voiceActive && !voiceAborted) {
+        setTimeout(() => {
+          if (voiceActive && !voiceAborted && !isListening) {
+            startListening(async spokenText => {
+              document.getElementById("vo-live-text").textContent = "";
+              setVoiceState("thinking");
+              addVoiceMessage("user", spokenText);
+              await sendVoiceMessage(spokenText);
+            });
+          }
+        }, 400); // small pause before mic reopens
+      }
+    });
 
   } catch {
     setVoiceState("idle");
@@ -1865,25 +1880,39 @@ async function playGoogleTTS(chunks, lang) {
 
     const url = gttsUrl(chunks[i], lang);
 
-    try {
-      // Fetch audio as blob to avoid CORS issues on some browsers
-      const res = await fetch(url, { headers: { "Referer": "https://translate.google.com/" } });
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
+    const ok = await new Promise(resolve => {
+      if (voiceAborted) { resolve(true); return; }
 
-      await new Promise((resolve, reject) => {
-        if (voiceAborted) { resolve(); return; }
-        const audio = new Audio(blobUrl);
-        currentAudio = audio;
-        audio.playbackRate = 1.05;
-        audio.onended  = () => { URL.revokeObjectURL(blobUrl); resolve(); };
-        audio.onerror  = () => { URL.revokeObjectURL(blobUrl); reject(); };
-        audio.play().catch(reject);
-      });
-    } catch {
-      return false; // Signal failure → fallback to Web Speech
-    }
+      const audio = new Audio();
+      currentAudio = audio;
+
+      // Use audio element directly — no fetch, no CORS issue on mobile
+      audio.crossOrigin = "anonymous";
+      audio.playbackRate = 1.0;
+
+      let loaded = false;
+
+      audio.oncanplaythrough = () => {
+        if (loaded) return;
+        loaded = true;
+        audio.play().catch(() => resolve(false));
+      };
+
+      audio.onended  = () => resolve(true);
+      audio.onerror  = () => resolve(false);
+
+      // Timeout: if audio doesn't load in 4s → fallback
+      const timeout = setTimeout(() => {
+        if (!loaded) resolve(false);
+      }, 4000);
+
+      audio.onended = () => { clearTimeout(timeout); resolve(true); };
+
+      audio.src = url;
+      audio.load();
+    });
+
+    if (!ok) return false;
   }
   return true;
 }
