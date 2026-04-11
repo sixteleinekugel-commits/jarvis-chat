@@ -1689,64 +1689,74 @@ function pickBestVoice(bcp47) {
   const voices = synthesis.getVoices();
   if (!voices.length) return null;
 
-  const primary = bcp47.slice(0, 2).toLowerCase();
+  const primary = (bcp47 || "en").slice(0, 2).toLowerCase();
 
-  // Score each voice: higher = better
   function score(v) {
     const n  = v.name.toLowerCase();
     const vl = v.lang.toLowerCase();
-    let s = 0;
 
-    // Must match the target language
+    // Must match primary language
     if (!vl.startsWith(primary)) return -1;
 
-    // Prefer premium / neural voices
-    if (n.includes("google")) s += 10;
-    if (n.includes("wavenet") || n.includes("neural") || n.includes("premium")) s += 8;
-    if (n.includes("natural")) s += 5;
+    let s = 0;
 
-    // Prefer exact locale match (fr-FR > fr-CA for French, etc.)
-    if (vl === bcp47.toLowerCase()) s += 4;
+    // Top-tier: Google Neural/Wavenet
+    if (n.includes("google")) s += 20;
+    if (n.includes("wavenet")) s += 15;
+    if (n.includes("neural") || n.includes("premium") || n.includes("enhanced")) s += 12;
+    if (n.includes("natural")) s += 8;
 
-    // Known high-quality names per language
-    const GOOD_NAMES = {
-      fr: ["thomas","amelie","marie","juliette","nicolas"],
-      es: ["monica","paulina","jorge","juan","rosa"],
-      de: ["anna","markus","yannick","petra"],
-      it: ["alice","luca","federica","paola"],
-      pt: ["joana","luciana","catarina","daniel"],
-      ar: ["maged","tarik"],
-      zh: ["tingting","meijia","lili"],
-      ja: ["kyoko","otoya","hattori"],
-      ko: ["seoyeon","yuna"],
-      ru: ["milena","yuri","katya"],
-      nl: ["xander","ellen","fiona"],
-      pl: ["zosia","krzysztof"],
-      tr: ["yelda","cem"],
-      sv: ["alva","klara"],
-      en: ["daniel","kate","serena","moira","samantha"],
+    // Exact locale match bonus
+    if (vl === bcp47.toLowerCase()) s += 5;
+
+    // Best native voices by language (covers iOS/macOS/Windows/Android)
+    const NATIVES = {
+      fr: ["thomas","amelie","marie","juliette","nicolas","mathieu","léa","lea","french"],
+      es: ["monica","paulina","jorge","juan","rosa","carmen","spanish"],
+      de: ["anna","markus","yannick","petra","hans","helge","german"],
+      it: ["alice","luca","federica","paola","italian"],
+      pt: ["joana","luciana","catarina","daniel","portuguese"],
+      ar: ["maged","tarik","zuzana","arabic"],
+      zh: ["tingting","meijia","lili","chinese"],
+      ja: ["kyoko","otoya","hattori","japanese"],
+      ko: ["seoyeon","yuna","korean"],
+      ru: ["milena","yuri","katya","russian"],
+      nl: ["xander","ellen","fiona","dutch"],
+      pl: ["zosia","krzysztof","polish"],
+      tr: ["yelda","cem","turkish"],
+      sv: ["alva","klara","swedish"],
+      en: ["daniel","kate","serena","moira","samantha","karen","victoria","rishi"],
     };
 
-    const good = GOOD_NAMES[primary] || [];
-    if (good.some(g => n.includes(g))) s += 6;
+    const native = NATIVES[primary] || [];
+    if (native.some(g => n.includes(g))) s += 10;
 
-    // Penalise clearly robotic / compact voices
-    if (n.includes("compact") || n.includes("espeaks") || n.includes("espeak")) s -= 10;
+    // Penalise robotic/compact
+    if (n.includes("compact")) s -= 15;
+    if (n.includes("espeak") || n.includes("espeaks") || n.includes("mbrola")) s -= 20;
+
+    // Prefer local voices (not remote) — more reliable on mobile
+    if (v.localService) s += 3;
 
     return s;
   }
 
-  const sorted = voices.map(v => ({ v, s: score(v) })).filter(x => x.s >= 0).sort((a,b) => b.s - a.s);
-  return sorted.length ? sorted[0].v : voices.find(v => v.lang.toLowerCase().startsWith(primary)) || null;
+  const candidates = voices
+    .map(v => ({ v, s: score(v) }))
+    .filter(x => x.s >= 0)
+    .sort((a, b) => b.s - a.s);
+
+  if (candidates.length) return candidates[0].v;
+
+  // Last resort: any voice matching the language
+  return voices.find(v => v.lang.toLowerCase().startsWith(primary)) || null;
 }
 
-function speakText(text, langCode) {
-  if (!synthesis) { setVoiceState("idle"); return; }
+function speakText(text, langCode, onDone) {
+  if (!synthesis) { if (onDone) onDone(); setVoiceState("idle"); return; }
   synthesis.cancel();
 
-  const lang2 = langCode || detectedLang || "en-US";
-
-  // Clean markdown for cleaner speech
+  // Clean markdown — identical to Listen button
   const clean = text
     .replace(/\*\*(.+?)\*\*/gs, "$1")
     .replace(/\*(.+?)\*/gs, "$1")
@@ -1758,47 +1768,64 @@ function speakText(text, langCode) {
     .replace(/\s{2,}/g, " ")
     .trim();
 
-  if (!clean) { setVoiceState("idle"); return; }
+  if (!clean) { if (onDone) onDone(); setVoiceState("idle"); return; }
 
-  // Split into sentences (handles French «!», «?» too)
-  const sentences = clean.match(/[^.!?…]+[.!?…]+(?:\s|$)|[^.!?…]+$/g) || [clean];
+  // Split into natural chunks — max 180 chars to avoid cutoff on iOS
+  const rawSentences = clean.match(/[^.!?…;:]+[.!?…;:]+(?:\s|$)|[^.!?…;:]+$/g) || [clean];
+  const chunks = [];
+  for (const s of rawSentences) {
+    const trimmed = s.trim();
+    if (!trimmed) continue;
+    // If a sentence is very long, split at commas too
+    if (trimmed.length > 180) {
+      const sub = trimmed.match(/[^,]+,?/g) || [trimmed];
+      sub.forEach(p => { if (p.trim()) chunks.push(p.trim()); });
+    } else {
+      chunks.push(trimmed);
+    }
+  }
+  if (!chunks.length) { if (onDone) onDone(); setVoiceState("idle"); return; }
 
-  function doSpeak(voice) {
+  function runSpeak(voice) {
     let idx = 0;
-    setVoiceState("speaking");
+    let started = false;
 
     function next() {
-      if (idx >= sentences.length) {
+      if (idx >= chunks.length) {
         setVoiceState("idle");
         document.getElementById("vo-live-text").textContent = "";
+        if (onDone) onDone();
         return;
       }
-      const chunk = sentences[idx].trim();
-      idx++;
-      if (!chunk) { next(); return; }
+      const chunk = chunks[idx++];
 
-      const utt = new SpeechSynthesisUtterance(chunk);
-      utt.lang  = lang2;
-      utt.rate  = 1.0;
-      utt.pitch = 1.0;
+      const utt   = new SpeechSynthesisUtterance(chunk);
+      utt.lang    = langCode || "en-US";
+      utt.rate    = 0.95;   // slightly slower = more natural, less robotic
+      utt.pitch   = 1.0;
+      utt.volume  = 1.0;
       if (voice) utt.voice = voice;
 
+      utt.onstart = () => { if (!started) { started = true; setVoiceState("speaking"); } };
       utt.onend   = next;
-      utt.onerror = next;
+      utt.onerror = (e) => {
+        // on iOS "interrupted" is normal between chunks — continue
+        if (e.error !== "canceled") next();
+      };
+
       synthesis.speak(utt);
     }
 
     next();
   }
 
-  // Voices available immediately?
+  // Wait for voices to load if not ready yet (Chrome async)
   const voices = synthesis.getVoices();
   if (voices.length) {
-    doSpeak(pickBestVoice(lang2));
+    runSpeak(pickBestVoice(langCode));
   } else {
-    // Wait for voices to load (Chrome async)
     synthesis.addEventListener("voiceschanged", () => {
-      doSpeak(pickBestVoice(lang2));
+      runSpeak(pickBestVoice(langCode));
     }, { once: true });
   }
 }
@@ -2148,12 +2175,11 @@ function addActions(wrap, text) {
     }
     unlockTTS();
     speakBtn.innerHTML = stopIcon;
-    const lang = detectLanguageFromText(text);
-    const entry = LANG_VOICE_HINTS[lang];
-    speakText(text, entry ? entry.lang : "en-US");
-    const check = setInterval(() => {
-      if (!synthesis || !synthesis.speaking) { speakBtn.innerHTML = listenIcon; clearInterval(check); }
-    }, 300);
+    // Detect language from the reply text — most reliable signal
+    const detected = detectLanguageFromText(text);
+    const entry    = LANG_VOICE_HINTS[detected];
+    const bcp47    = entry ? entry.lang : "en-US";
+    speakText(text, bcp47, () => { speakBtn.innerHTML = listenIcon; });
   };
 
   actions.appendChild(copyBtn);
