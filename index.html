@@ -1655,8 +1655,12 @@ async function sendVoiceMessage(text) {
     // Show in voice UI only
     addVoiceMessage("bot", reply);
 
-    // Speak immediately — sentence by sentence as they arrive
-    speakText(reply, detectedLang);
+    // Detect language from the REPLY (longer, more reliable) then speak
+    const replyLangCode = detectLanguageFromText(reply);
+    const replyEntry    = LANG_VOICE_HINTS[replyLangCode];
+    const replyBcp47    = replyEntry ? replyEntry.lang : (detectedLang || "en-US");
+
+    speakText(reply, replyBcp47);
 
   } catch {
     setVoiceState("idle");
