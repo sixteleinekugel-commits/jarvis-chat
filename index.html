@@ -3,10 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="description" content="Nova AI — Intelligent assistant powered by advanced AI.">
+
+<!-- ══ SEO ══════════════════════════════════════════════════ -->
+<title>Nova AI 618 — Free Intelligent AI Assistant</title>
+<meta name="description" content="Nova AI 618 — Your free intelligent AI assistant. Chat, generate images, analyze photos, voice mode. Sign in or continue as guest at Nova AI 618.">
+<meta name="keywords" content="Nova AI 618, AI assistant, artificial intelligence, chatbot, image generation, photo analysis, voice AI, free AI chat">
 <meta name="robots" content="index, follow">
-<title>Nova AI</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000'/><ellipse cx='50' cy='50' rx='48' ry='11' fill='none' stroke='%23ff8c00' stroke-width='3' transform='rotate(-20 50 50)'/><circle cx='50' cy='50' r='18' fill='%23000'/><circle cx='50' cy='50' r='19' fill='none' stroke='%237c6aff' stroke-width='1.5'/></svg>">
+<meta name="author" content="Nova AI 618">
+<link rel="canonical" href="https://sixteleinekugel-commits.github.io/jarvis-chat/">
+
+<!-- ══ OPEN GRAPH ════════════════════════════════════════════ -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nova AI 618 — Free Intelligent AI Assistant">
+<meta property="og:description" content="Chat with Nova AI 618 — generate images, analyze photos, voice mode. Free and instant. No download needed.">
+<meta property="og:url" content="https://sixteleinekugel-commits.github.io/jarvis-chat/">
+<meta property="og:site_name" content="Nova AI 618">
+<meta property="og:locale" content="en_US">
+
+<!-- ══ TWITTER CARD ═════════════════════════════════════════ -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nova AI 618 — Free Intelligent AI Assistant">
+<meta name="twitter:description" content="Chat, generate images, analyze photos. Free AI — no download needed.">
+
+<!-- ══ SCHEMA.ORG ═══════════════════════════════════════════ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Nova AI 618",
+  "url": "https://sixteleinekugel-commits.github.io/jarvis-chat/",
+  "description": "Nova AI 618 is a free intelligent AI assistant. Chat, generate images, analyze photos and use voice mode — all for free.",
+  "applicationCategory": "AIApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Organization", "name": "Nova AI 618" },
+  "featureList": ["AI Chat", "Image Generation", "Photo Analysis", "Voice Mode", "Free to use"]
+}
+</script>
+
+<!-- ══ FAVICON ═══════════════════════════════════════════════ -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000'/><ellipse cx='50' cy='50' rx='46' ry='10' fill='none' stroke='%23ff8c00' stroke-width='3.5' transform='rotate(-18 50 50)'/><circle cx='50' cy='50' r='20' fill='%23000'/><circle cx='50' cy='50' r='21' fill='none' stroke='%237c6aff' stroke-width='1.5'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23000'/><ellipse cx='50' cy='50' rx='46' ry='10' fill='none' stroke='%23ff8c00' stroke-width='3.5' transform='rotate(-18 50 50)'/><circle cx='50' cy='50' r='20' fill='%23000'/><circle cx='50' cy='50' r='21' fill='none' stroke='%237c6aff' stroke-width='1.5'/></svg>">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
@@ -24,7 +62,6 @@
 html{height:100%}
 body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;height:100%;overflow:hidden;-webkit-tap-highlight-color:transparent}
 
-/* ── AUTH ─────────────────────────────────────────────────── */
 #auth-screen{display:flex;height:100dvh;overflow:hidden}
 #auth-left{width:44%;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 40px;position:relative;overflow:hidden;flex-shrink:0}
 .auth-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,106,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(124,106,255,0.035) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
@@ -76,7 +113,11 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .chk-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2);cursor:pointer;line-height:1.5}
 .chk-row input{accent-color:var(--accent);margin-top:2px;flex-shrink:0}
 
-/* ── APP ──────────────────────────────────────────────────── */
+/* ── AUTH BOTTOM LINK ─────────────────────────────────────── */
+.auth-bottom-note{text-align:center;margin-top:18px;font-size:12px;color:var(--text3);line-height:1.8}
+.auth-bottom-note a{color:var(--accent);text-decoration:underline;cursor:pointer;font-weight:500}
+.auth-bottom-note a:hover{color:var(--accent2)}
+
 #app-screen{display:none;height:100dvh;overflow:hidden;position:relative}
 #sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:150;backdrop-filter:blur(3px)}
 #sidebar-overlay.open{display:block}
@@ -132,7 +173,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .dd-item.danger{color:var(--red)}
 .dd-item.danger:hover{background:rgba(239,68,68,.08)}
 
-/* ── MAIN ─────────────────────────────────────────────────── */
 #main{display:flex;flex-direction:column;height:100dvh;overflow:hidden;margin-left:var(--sidebar-w)}
 #topbar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;flex-shrink:0;border-bottom:1px solid var(--border);background:rgba(5,6,8,.92);backdrop-filter:blur(20px)}
 .tb-left{display:flex;align-items:center;gap:9px;min-width:0}
@@ -150,7 +190,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .voice-btn:hover{background:var(--surface2);color:var(--text)}
 .voice-btn svg{width:13px;height:13px}
 
-/* ── CHAT ─────────────────────────────────────────────────── */
 #chat-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #chat-wrap::-webkit-scrollbar{width:4px}
 #chat-wrap::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px}
@@ -182,8 +221,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .bubble{padding:10px 14px;font-size:14px;line-height:1.7;word-break:break-word}
 .bubble.bot{background:var(--surface);border:1px solid var(--border);border-radius:4px 13px 13px 13px;color:var(--text)}
 .bubble.user{background:var(--accent);color:#fff;border-radius:13px 4px 13px 13px}
-
-/* ── MARKDOWN STYLES ──────────────────────────────────────── */
 .bubble h1{font-family:var(--fh);font-size:16px;font-weight:700;margin:14px 0 6px;border-bottom:1px solid var(--border);padding-bottom:6px}
 .bubble h2{font-family:var(--fh);font-size:14.5px;font-weight:700;margin:12px 0 5px}
 .bubble h3{font-family:var(--fh);font-size:13.5px;font-weight:600;margin:10px 0 4px;color:var(--accent2)}
@@ -207,7 +244,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .bubble td{padding:6px 11px;border:1px solid var(--border);font-size:13px}
 .bubble tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
 .bubble a{color:var(--accent2);text-decoration:underline}
-
 .msg-actions{display:flex;gap:3px;margin-top:4px;opacity:0;transition:opacity .15s;flex-wrap:wrap}
 .msg-group:hover .msg-actions{opacity:1}
 .act-btn{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;transition:all .15s;font-family:var(--fb)}
@@ -220,8 +256,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 @keyframes bouncing{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-5px);opacity:1}}
 .day-div{display:flex;align-items:center;gap:11px;color:var(--text3);font-size:10.5px;margin:9px 0 3px}
 .day-div::before,.day-div::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* ── IMAGE ────────────────────────────────────────────────── */
 .generated-img{max-width:100%;border-radius:11px;margin-top:7px;border:1px solid var(--border2);display:block}
 .img-loading{display:flex;align-items:center;gap:9px;color:var(--text2);font-size:13px;padding:5px 0}
 .img-spinner{width:17px;height:17px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
@@ -233,8 +267,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .img-edit-btn{padding:7px 13px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-family:var(--fb);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
 .img-edit-btn:hover{background:var(--accent2)}
 .img-edit-btn:disabled{background:var(--surface3);cursor:not-allowed}
-
-/* ── PHOTO UPLOAD ─────────────────────────────────────────── */
 .photo-preview-zone{margin-bottom:6px}
 .photo-preview-wrap{display:flex;align-items:center;gap:9px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:11px}
 .photo-preview-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border2)}
@@ -244,8 +276,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .photo-remove-btn{width:24px;height:24px;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--text3);transition:all .15s}
 .photo-remove-btn:hover{background:rgba(239,68,68,.15);color:var(--red)}
 .photo-remove-btn svg{width:11px;height:11px}
-
-/* ── INPUT ────────────────────────────────────────────────── */
 #input-zone{padding:11px 16px;padding-bottom:calc(11px + var(--sb));flex-shrink:0}
 #input-wrap-outer{max-width:740px;margin:0 auto}
 #input-box{background:var(--surface);border:1px solid var(--border2);border-radius:15px;transition:border-color .2s,box-shadow .2s;overflow:hidden}
@@ -274,8 +304,9 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 #char-count{font-size:10.5px;color:var(--text3)}
 .kbd{font-size:10px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px}
 .foot-note{text-align:center;font-size:10.5px;color:var(--text3);margin-top:7px}
+.foot-note a{color:var(--accent);text-decoration:underline;cursor:pointer}
+.foot-note a:hover{color:var(--accent2)}
 
-/* ── VOICE MODE ───────────────────────────────────────────── */
 #voice-overlay{display:none;position:fixed;inset:0;background:#03040a;z-index:600;flex-direction:column;animation:vo-in .3s ease}
 #voice-overlay.open{display:flex}
 @keyframes vo-in{from{opacity:0}to{opacity:1}}
@@ -336,8 +367,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .vo-main:active{transform:scale(.97)}
 .vo-main svg{width:28px;height:28px}
 #voice-overlay.listening .vo-main{background:var(--red);box-shadow:0 4px 22px rgba(239,68,68,.38);animation:orb-breathe .9s ease-in-out infinite alternate}
-
-/* ── MODALS ───────────────────────────────────────────────── */
 .m-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:18px}
 .m-overlay.open{display:flex}
 .m-box{background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:20px;width:400px;max-width:100%;animation:modal-in .2s ease;max-height:90dvh;overflow-y:auto}
@@ -356,7 +385,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 .mbadge-new{background:rgba(99,102,241,.12);color:#818cf8}
 .m-close{width:100%;margin-top:7px;padding:10px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--text2);font-family:var(--fb);font-size:13px;cursor:pointer;transition:all .15s}
 .m-close:hover{background:var(--surface2)}
-
 #toast{position:fixed;bottom:calc(18px + var(--sb));left:50%;transform:translateX(-50%) translateY(70px);background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:9px 18px;font-size:13px;color:var(--text);z-index:999;transition:transform .3s ease;pointer-events:none;white-space:nowrap}
 #toast.show{transform:translateX(-50%) translateY(0)}
 #photo-input{display:none}
@@ -393,7 +421,15 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
 </head>
 <body>
 
-<!-- ═══ INTERSTELLAR BLACK HOLE SVG ═══════════════════════════ -->
+<!-- ══ SEO HIDDEN CONTENT ════════════════════════════════════ -->
+<div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap" aria-hidden="true">
+  <h1>Nova AI 618 — Free Intelligent AI Assistant</h1>
+  <p>Nova AI 618 is a free AI assistant. <a href="https://sixteleinekugel-commits.github.io/jarvis-chat/">Sign in to Nova AI 618</a> or continue as guest. Chat with AI, generate images, analyze photos, use voice mode. No download needed. Free forever.</p>
+  <p>Features: AI Chat · Image Generation · Photo Analysis · Voice Mode · Free · No registration required</p>
+  <p>Nova AI 618 — Sign in · Create account · Continue as guest</p>
+</div>
+
+<!-- ══ BLACK HOLE SVG ════════════════════════════════════════ -->
 <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <radialGradient id="bh-space" cx="50%" cy="50%" r="50%">
@@ -406,11 +442,6 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
     <stop offset="75%" stop-color="#a08aff" stop-opacity="0.35"/>
     <stop offset="90%" stop-color="#7c6aff" stop-opacity="0.15"/>
     <stop offset="100%" stop-color="#7c6aff" stop-opacity="0"/>
-  </radialGradient>
-  <radialGradient id="bh-shadow" cx="50%" cy="50%" r="50%">
-    <stop offset="0%" stop-color="#000000"/>
-    <stop offset="80%" stop-color="#000000"/>
-    <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
   </radialGradient>
   <linearGradient id="bh-disk-top" x1="0%" y1="0%" x2="100%" y2="0%">
     <stop offset="0%" stop-color="#ff4500" stop-opacity="0"/>
@@ -441,24 +472,16 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
     <feGaussianBlur stdDeviation="1.2" result="blur"/>
     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <filter id="bh-soft">
-    <feGaussianBlur stdDeviation="0.8"/>
-  </filter>
+  <filter id="bh-soft"><feGaussianBlur stdDeviation="0.8"/></filter>
   <filter id="bh-disk-glow">
     <feGaussianBlur stdDeviation="1.5" result="b"/>
     <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>
-  <clipPath id="bh-half-top">
-    <rect x="0" y="0" width="100" height="50"/>
-  </clipPath>
-  <clipPath id="bh-half-bot">
-    <rect x="0" y="50" width="100" height="50"/>
-  </clipPath>
+  <clipPath id="bh-half-top"><rect x="0" y="0" width="100" height="50"/></clipPath>
+  <clipPath id="bh-half-bot"><rect x="0" y="50" width="100" height="50"/></clipPath>
 </defs>
 <symbol id="bh-icon" viewBox="0 0 100 100">
-  <!-- Deep space background -->
   <circle cx="50" cy="50" r="50" fill="url(#bh-space)"/>
-  <!-- Stars -->
   <circle cx="8"  cy="14" r=".35" fill="white" opacity=".7"/>
   <circle cx="88" cy="19" r=".28" fill="white" opacity=".55"/>
   <circle cx="94" cy="68" r=".32" fill="white" opacity=".65"/>
@@ -468,41 +491,32 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
   <circle cx="20" cy="55" r=".2"  fill="white" opacity=".4"/>
   <circle cx="82" cy="42" r=".25" fill="white" opacity=".5"/>
   <circle cx="58" cy="90" r=".2"  fill="white" opacity=".4"/>
-  <!-- Gravitational lensing halo -->
   <circle cx="50" cy="50" r="36" fill="url(#bh-lensing)"/>
-  <!-- Accretion disk — BOTTOM half (behind black hole) -->
   <g clip-path="url(#bh-half-bot)">
     <ellipse cx="50" cy="50" rx="46" ry="10" fill="none" stroke="url(#bh-disk-bot)" stroke-width="3" transform="rotate(-18 50 50)" filter="url(#bh-soft)" opacity=".55"/>
     <ellipse cx="50" cy="50" rx="38" ry="7.5" fill="none" stroke="url(#bh-disk-bot)" stroke-width="2" transform="rotate(-18 50 50)" filter="url(#bh-soft)" opacity=".35"/>
   </g>
-  <!-- Event horizon shadow -->
   <circle cx="50" cy="50" r="22" fill="#000"/>
-  <!-- Accretion disk — TOP half (in front of black hole) -->
   <g clip-path="url(#bh-half-top)">
     <ellipse cx="50" cy="50" rx="46" ry="10" fill="none" stroke="url(#bh-disk-top)" stroke-width="4.5" transform="rotate(-18 50 50)" filter="url(#bh-disk-glow)"/>
     <ellipse cx="50" cy="50" rx="38" ry="7" fill="none" stroke="url(#bh-disk-top)" stroke-width="2.5" transform="rotate(-18 50 50)" filter="url(#bh-soft)" opacity=".7"/>
     <ellipse cx="50" cy="50" rx="29" ry="4.5" fill="none" stroke="#ffcc66" stroke-width="1.5" transform="rotate(-18 50 50)" opacity=".4"/>
   </g>
-  <!-- Black hole core (pure black) -->
   <circle cx="50" cy="50" r="20" fill="#000"/>
-  <!-- Photon ring -->
   <circle cx="50" cy="50" r="21" fill="none" stroke="url(#bh-photon)" stroke-width="1.2" opacity=".95" filter="url(#bh-glow-filter)"/>
-  <!-- Inner glow rim -->
   <circle cx="50" cy="50" r="20.4" fill="none" stroke="#7c6aff" stroke-width=".6" opacity=".8"/>
   <circle cx="50" cy="50" r="19.6" fill="none" stroke="#ff8c00" stroke-width=".4" opacity=".5"/>
 </symbol>
 </svg>
 
-<!-- ═══ AUTH ══════════════════════════════════════════════════ -->
+<!-- ══ AUTH ══════════════════════════════════════════════════ -->
 <div id="auth-screen">
   <div id="auth-left">
     <div class="auth-grid"></div>
     <div class="auth-glow"></div>
     <div class="auth-brand">
-      <div class="auth-logo-wrap">
-        <svg width="80" height="80" viewBox="0 0 100 100"><use href="#bh-icon"/></svg>
-      </div>
-      <div class="auth-brand-name">NOVA <em>AI</em></div>
+      <div class="auth-logo-wrap"><svg width="80" height="80" viewBox="0 0 100 100"><use href="#bh-icon"/></svg></div>
+      <div class="auth-brand-name">NOVA <em>AI 618</em></div>
       <div class="auth-tagline">Next-generation artificial intelligence. Fast, precise, always available.</div>
       <div class="auth-features">
         <div class="auth-feat"><div class="auth-feat-icon">💬</div><span>Conversations saved and accessible anywhere</span></div>
@@ -517,7 +531,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
     <div class="auth-card">
       <div class="auth-mobile-header">
         <div class="auth-mobile-logo"><svg width="54" height="54" viewBox="0 0 100 100"><use href="#bh-icon"/></svg></div>
-        <div class="auth-mobile-title">NOVA <em>AI</em></div>
+        <div class="auth-mobile-title">NOVA <em>AI 618</em></div>
         <div class="auth-mobile-sub">Next-generation artificial intelligence</div>
       </div>
       <div class="auth-tabs">
@@ -542,6 +556,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
         <button class="btn-primary" onclick="doLogin()">Sign In</button>
         <div class="auth-divider">or</div>
         <button class="btn-guest" onclick="doGuest()"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 13.5c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Continue as Guest</button>
+        <div class="auth-bottom-note">No account? <a onclick="switchTab('register')">Create one free</a> · <a onclick="doGuest()">Continue as guest</a></div>
       </div>
       <div id="register-form" style="display:none">
         <div class="auth-form-title">Create an account</div>
@@ -564,19 +579,20 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
         <button class="btn-primary" onclick="doRegister()">Create my account</button>
         <div class="auth-divider">or</div>
         <button class="btn-guest" onclick="doGuest()"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 13.5c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>Continue as Guest</button>
+        <div class="auth-bottom-note">Already have an account? <a onclick="switchTab('login')">Sign in</a></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ APP ═══════════════════════════════════════════════════ -->
+<!-- ══ APP ═══════════════════════════════════════════════════ -->
 <div id="app-screen">
   <div id="sidebar-overlay" onclick="closeSidebar()"></div>
   <aside id="sidebar">
     <div class="sb-header">
       <div class="logo">
         <div class="logo-mark"><svg width="30" height="30" viewBox="0 0 100 100"><use href="#bh-icon"/></svg></div>
-        <span class="logo-txt">NOVA <em>AI</em></span>
+        <span class="logo-txt">NOVA <em>AI 618</em></span>
       </div>
       <button class="new-btn" onclick="newConversation();closeSidebar();"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>New conversation</button>
     </div>
@@ -623,7 +639,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
         <div id="empty-state">
           <div class="empty-logo"><svg width="72" height="72" viewBox="0 0 100 100"><use href="#bh-icon"/></svg></div>
           <div class="empty-title" id="empty-title">Hello! How can I help?</div>
-          <div class="empty-sub" id="empty-sub">I am Nova AI — ask me anything, generate images, or upload a photo to analyze!</div>
+          <div class="empty-sub" id="empty-sub">I am Nova AI 618 — ask me anything, generate images, or upload a photo to analyze!</div>
           <div class="prompts-grid">
             <div class="p-card" onclick="fillPrompt('Explain how black holes work')"><span class="p-card-icon">🧠</span><div class="p-card-title">Explain a concept</div><div class="p-card-sub">Science, AI, history...</div></div>
             <div class="p-card" onclick="fillPrompt('Help me write a professional email')"><span class="p-card-icon">✍️</span><div class="p-card-title">Write something</div><div class="p-card-sub">Email, article, summary...</div></div>
@@ -639,7 +655,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
         <div class="photo-preview-zone" id="photo-preview-zone"></div>
         <div id="input-box">
           <div id="input-top">
-            <textarea id="prompt" rows="1" placeholder="Talk to Nova AI... or type 'image' to create one!"></textarea>
+            <textarea id="prompt" rows="1" placeholder="Talk to Nova AI 618... or type 'image' to create one!"></textarea>
             <button id="send-btn" onclick="sendMessage()"><svg viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2l3 6-3 6 12-6z" fill="white"/></svg></button>
           </div>
           <div id="input-bottom">
@@ -651,16 +667,16 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
             <div class="input-meta"><span id="char-count">0 / 4096</span><span class="kbd">↵ Send</span></div>
           </div>
         </div>
-        <p class="foot-note">Nova AI can make mistakes. Always verify important information.</p>
+        <p class="foot-note">Nova AI 618 can make mistakes. · <a onclick="document.getElementById('auth-screen').style.display='flex';document.getElementById('app-screen').style.display='none';switchTab('login')">Sign in</a> · <a onclick="document.getElementById('auth-screen').style.display='flex';document.getElementById('app-screen').style.display='none';switchTab('register')">Create account</a></p>
       </div>
     </div>
   </main>
 </div>
 
-<!-- ═══ VOICE ══════════════════════════════════════════════════ -->
+<!-- ══ VOICE ══════════════════════════════════════════════════ -->
 <div id="voice-overlay">
   <div class="vo-topbar">
-    <div class="vo-brand"><div class="vo-dot"></div><span>NOVA AI</span><span class="vo-lang" id="vo-lang">Auto</span></div>
+    <div class="vo-brand"><div class="vo-dot"></div><span>NOVA AI 618</span><span class="vo-lang" id="vo-lang">Auto</span></div>
     <button class="vo-x" onclick="closeVoiceMode()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
   </div>
   <div class="vo-hist" id="vo-hist"></div>
@@ -674,13 +690,13 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:14px
     <div class="vo-live" id="vo-live"></div>
   </div>
   <div class="vo-controls">
-    <button class="vo-btn vo-sec" onclick="stopSpeaking()" title="Stop"><svg viewBox="0 0 24 24" fill="none"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg></button>
+    <button class="vo-btn vo-sec" onclick="stopSpeaking()"><svg viewBox="0 0 24 24" fill="none"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg></button>
     <button class="vo-btn vo-main" onclick="toggleVoiceMic()"><svg viewBox="0 0 24 24" fill="none"><rect x="8" y="2" width="8" height="13" rx="4" fill="white"/><path d="M4 11a8 8 0 0016 0" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12 19v3" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg></button>
-    <button class="vo-btn vo-sec" onclick="voiceModeNewChat()" title="New chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="vo-btn vo-sec" onclick="voiceModeNewChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   </div>
 </div>
 
-<!-- ═══ MODEL MODAL ════════════════════════════════════════════ -->
+<!-- ══ MODEL MODAL ════════════════════════════════════════════ -->
 <div class="m-overlay" id="model-modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="m-box">
     <p class="m-title">Choose a model</p>
@@ -715,7 +731,7 @@ function isImageReq(t){const s=t.toLowerCase().trim();if(s==="image"||s.startsWi
 function formatMsg(text){
   if(!text)return"";
   let t=text;
-  t=t.replace(/```([\w]*)\n?([\s\S]*?)```/g,(_,lang,code)=>`<pre><code class="lang-${lang}">${escHtml(code.trim())}</code></pre>`);
+  t=t.replace(/```([\w]*)\n?([\s\S]*?)```/g,(_,lang,code)=>`<pre><code>${escHtml(code.trim())}</code></pre>`);
   t=t.replace(/`([^`\n]+)`/g,(_,c)=>`<code>${escHtml(c)}</code>`);
   t=t.replace(/^#{4}\s+(.+)$/gm,"<h4>$1</h4>");
   t=t.replace(/^#{3}\s+(.+)$/gm,"<h3>$1</h3>");
@@ -732,8 +748,7 @@ function formatMsg(text){
   t=t.replace(/^[-*+]\s+(.+)$/gm,"<li>$1</li>");
   t=t.replace(/(<li data-ol>[\s\S]*?<\/li>\s*)+/g,m=>`<ol>${m.replace(/ data-ol/g,"")}</ol>`);
   t=t.replace(/(<li>[\s\S]*?<\/li>\s*)+/g,m=>`<ul>${m}</ul>`);
-  const lines=t.split("\n");
-  const out=[];
+  const lines=t.split("\n");const out=[];
   for(const line of lines){
     const l=line.trim();
     if(!l){out.push("");continue;}
@@ -744,7 +759,6 @@ function formatMsg(text){
 }
 function escHtml(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-
 function bhAv(size=28){return`<svg width="${size}" height="${size}" viewBox="0 0 100 100"><use href="#bh-icon"/></svg>`}
 
 function openSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("sidebar-overlay").classList.add("open");document.body.style.overflow="hidden"}
@@ -768,7 +782,7 @@ for(let i=0;i<22;i++){const b=document.createElement("div");b.className="wave-ba
 function animWave(on){clearInterval(waveInterval);const bars=waveEl.querySelectorAll(".wave-bar");if(!on){bars.forEach(b=>b.style.height="4px");return}waveInterval=setInterval(()=>{bars.forEach(b=>{b.style.height=(isSpeaking?Math.random()*20+4:Math.random()*12+4)+"px"})},70)}
 function setVoiceState(s){const ov=document.getElementById("voice-overlay"),st=document.getElementById("vo-status");ov.classList.remove("idle","listening","thinking","speaking");ov.classList.add(s);if(s==="idle"){st.textContent="Tap the mic to speak";isListening=false;isSpeaking=false;animWave(false)}else if(s==="listening"){st.textContent="Listening…";isListening=true;isSpeaking=false;animWave(true)}else if(s==="thinking"){st.textContent="Thinking…";isListening=false;isSpeaking=false;animWave(false)}else if(s==="speaking"){st.textContent="Speaking…";isListening=false;isSpeaking=true;animWave(true)}}
 function addVoMsg(role,text){const h=document.getElementById("vo-hist");h.querySelector(".vo-hint")?.remove();const init=currentUser?currentUser.name.charAt(0).toUpperCase():"?";const row=document.createElement("div");row.className="vo-msg "+role;const av=document.createElement("div");av.className="vo-av "+(role==="user"?"user":"bot");if(role==="bot")av.innerHTML=bhAv(26);else av.textContent=init;const bub=document.createElement("div");bub.className="vo-bub "+(role==="user"?"user":"bot");bub.textContent=text;if(role==="user"){row.appendChild(bub);row.appendChild(av)}else{row.appendChild(av);row.appendChild(bub)}h.appendChild(row);h.scrollTop=h.scrollHeight}
-function openVoiceMode(){voiceActive=true;const ov=document.getElementById("voice-overlay");ov.classList.add("open");ov.classList.remove("idle","listening","thinking","speaking");ov.classList.add("idle");const h=document.getElementById("vo-hist");if(!h.querySelector(".vo-msg"))h.innerHTML='<div class="vo-hint">Your voice conversation will appear here.<br>Speak in any language — Nova understands you.</div>';setVoiceState("idle");document.getElementById("vo-live").textContent="";document.getElementById("vo-lang").textContent="Auto"}
+function openVoiceMode(){voiceActive=true;const ov=document.getElementById("voice-overlay");ov.classList.add("open");ov.classList.remove("idle","listening","thinking","speaking");ov.classList.add("idle");const h=document.getElementById("vo-hist");if(!h.querySelector(".vo-msg"))h.innerHTML='<div class="vo-hint">Your voice conversation will appear here.<br>Speak in any language — Nova AI 618 understands you.</div>';setVoiceState("idle");document.getElementById("vo-live").textContent="";document.getElementById("vo-lang").textContent="Auto"}
 function closeVoiceMode(){voiceActive=false;stopListening();stopSpeaking();document.getElementById("voice-overlay").classList.remove("open");setVoiceState("idle")}
 function voiceModeNewChat(){stopListening();stopSpeaking();document.getElementById("vo-hist").innerHTML='<div class="vo-hint">New voice conversation started.</div>';document.getElementById("vo-live").textContent="";document.getElementById("vo-lang").textContent="Auto";detLang="en-US";setVoiceState("idle")}
 function startListening(onFinal){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showToast("Speech recognition not supported.");return}if(recognition){try{recognition.abort()}catch{}}recognition=new SR();recognition.lang="";recognition.interimResults=true;recognition.maxAlternatives=1;let fT="",iT="";recognition.onstart=()=>{setVoiceState("listening");document.getElementById("vo-live").textContent=""};recognition.onresult=e=>{fT="";iT="";for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)fT+=t;else iT+=t}document.getElementById("vo-live").textContent=fT||iT;const c=fT||iT;if(c.length>8){const lang=detectLang(c);const en=LANG_MAP[lang];if(en){detLang=en.l;document.getElementById("vo-lang").textContent=lang.toUpperCase()}}};recognition.onend=()=>{isListening=false;const t=(fT||iT).trim();if(t)onFinal(t);else{setVoiceState("idle");document.getElementById("vo-live").textContent=""}};recognition.onerror=e=>{isListening=false;if(e.error!=="aborted"&&e.error!=="no-speech")showToast("Mic error: "+e.error);setVoiceState("idle")};try{recognition.start()}catch(err){showToast("Could not start mic: "+err.message)}}
@@ -807,7 +821,7 @@ function renderMsg(role,content,typing=false){
   if(role==="bot")av.innerHTML=bhAv(28);else av.textContent=init;
   const wrap=document.createElement("div");wrap.className="msg-content";
   const hdr=document.createElement("div");hdr.className="msg-header";
-  const sender=document.createElement("span");sender.className="msg-sender";sender.textContent=role==="user"?(currentUser?currentUser.name:"You"):"Nova";
+  const sender=document.createElement("span");sender.className="msg-sender";sender.textContent=role==="user"?(currentUser?currentUser.name:"You"):"Nova AI 618";
   const time=document.createElement("span");time.className="msg-time";time.textContent=new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
   hdr.appendChild(sender);hdr.appendChild(time);
   const bubble=document.createElement("div");bubble.className="bubble "+(role==="user"?"user":"bot");
@@ -846,7 +860,7 @@ async function generateImage(prompt,editBubble=null,editWrap=null){
     const av=document.createElement("div");av.className="msg-av bot";av.innerHTML=bhAv(28);
     wrap=document.createElement("div");wrap.className="msg-content";
     const hdr=document.createElement("div");hdr.className="msg-header";
-    const sender=document.createElement("span");sender.className="msg-sender";sender.textContent="Nova";
+    const sender=document.createElement("span");sender.className="msg-sender";sender.textContent="Nova AI 618";
     const time=document.createElement("span");time.className="msg-time";time.textContent=new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
     hdr.appendChild(sender);hdr.appendChild(time);
     bubble=document.createElement("div");bubble.className="bubble bot";
@@ -885,7 +899,7 @@ async function analyzePhoto(photoDataUrl,question){
   const av=document.createElement("div");av.className="msg-av bot";av.innerHTML=bhAv(28);
   const wrap=document.createElement("div");wrap.className="msg-content";
   const hdr=document.createElement("div");hdr.className="msg-header";
-  const sender=document.createElement("span");sender.className="msg-sender";sender.textContent="Nova";
+  const sender=document.createElement("span");sender.className="msg-sender";sender.textContent="Nova AI 618";
   const time=document.createElement("span");time.className="msg-time";time.textContent=new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
   hdr.appendChild(sender);hdr.appendChild(time);
   const bubble=document.createElement("div");bubble.className="bubble bot";
@@ -911,15 +925,8 @@ async function sendMessage(){
   if(!text&&!pendingPhoto)return;
   if(sendBtn.disabled)return;
   promptEl.value="";autoResize();updateCount();sendBtn.disabled=true;
-
-  if(pendingPhoto){
-    const photo=pendingPhoto;clearPhoto();
-    await analyzePhoto(photo.dataUrl,text||undefined);
-    sendBtn.disabled=false;promptEl.focus();return
-  }
-
+  if(pendingPhoto){const photo=pendingPhoto;clearPhoto();await analyzePhoto(photo.dataUrl,text||undefined);sendBtn.disabled=false;promptEl.focus();return}
   if(isImageReq(text)){await generateImage(text);sendBtn.disabled=false;return}
-
   if(messages.length===0)document.getElementById("conv-title").textContent=text.length>45?text.slice(0,45)+"…":text;
   renderMsg("user",text);messages.push({role:"user",content:text});
   const{bubble,wrap}=renderMsg("bot","",true);
@@ -947,8 +954,8 @@ function toggleDd(){document.getElementById("profile-dd").classList.toggle("open
 document.addEventListener("click",e=>{if(!e.target.closest(".user-row"))document.getElementById("profile-dd").classList.remove("open")});
 function selectModel(id,name,ctx,el){document.querySelectorAll(".model-opt").forEach(o=>o.classList.remove("selected"));el.classList.add("selected");selectedModel=id;document.getElementById("model-nm").textContent=name;document.getElementById("model-ctx").textContent=ctx;document.getElementById("model-badge").textContent=id;document.getElementById("model-modal").classList.remove("open")}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
-function downloadChat(){if(!messages.length){showToast("No messages to export.");return}const txt=messages.map(m=>`[${m.role==="user"?(currentUser?.name||"You"):"Nova"}]\n${m.content}`).join("\n\n──────────────\n\n");const a=document.createElement("a");a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(txt);a.download="conversation-nova.txt";a.click()}
-function exportAll(){const convs=getUserConvs();if(!convs.length){showToast("No saved conversations.");return}const all=convs.map(c=>`══════ ${c.title} ══════\n\n`+c.messages.map(m=>`[${m.role==="user"?currentUser.name:"Nova"}]\n${m.content}`).join("\n\n──────\n\n")).join("\n\n\n");const a=document.createElement("a");a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(all);a.download="nova-all-conversations.txt";a.click()}
+function downloadChat(){if(!messages.length){showToast("No messages to export.");return}const txt=messages.map(m=>`[${m.role==="user"?(currentUser?.name||"You"):"Nova AI 618"}]\n${m.content}`).join("\n\n──────────────\n\n");const a=document.createElement("a");a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(txt);a.download="conversation-nova-618.txt";a.click()}
+function exportAll(){const convs=getUserConvs();if(!convs.length){showToast("No saved conversations.");return}const all=convs.map(c=>`══════ ${c.title} ══════\n\n`+c.messages.map(m=>`[${m.role==="user"?currentUser.name:"Nova AI 618"}]\n${m.content}`).join("\n\n──────\n\n")).join("\n\n\n");const a=document.createElement("a");a.href="data:text/plain;charset=utf-8,"+encodeURIComponent(all);a.download="nova-618-all-conversations.txt";a.click()}
 
 document.getElementById("prompt").addEventListener("input",()=>{autoResize();updateCount()});
 document.getElementById("prompt").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});
