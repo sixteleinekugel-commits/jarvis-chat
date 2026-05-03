@@ -875,91 +875,34 @@ async function generateImage(prompt,editBubble=null,editWrap=null){
   document.getElementById("chat-wrap").scrollTop=999999
 }
 
-async function analyzePhoto(photoDataUrl, question) {
-  const displayQ = question || "Analyze this image in detail.";
-  renderMsg("user", displayQ);
-  const chatEl = document.getElementById("chat");
-  const cw = document.getElementById("chat-wrap");
-  hideEmpty();
-  if (msgCount === 0) addDivider("Today");
-  msgCount++;
-
-  const group = document.createElement("div");
-  group.className = "msg-group";
-  const row = document.createElement("div");
-  row.className = "msg-row bot";
-  const av = document.createElement("div");
-  av.className = "msg-av bot";
-  av.innerHTML = bhAv(28);
-  const wrap = document.createElement("div");
-  wrap.className = "msg-content";
-  const hdr = document.createElement("div");
-  hdr.className = "msg-header";
-  const sender = document.createElement("span");
-  sender.className = "msg-sender";
-  sender.textContent = "Nova";
-  const time = document.createElement("span");
-  time.className = "msg-time";
-  time.textContent = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
-  hdr.appendChild(sender);
-  hdr.appendChild(time);
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble bot";
-  bubble.innerHTML = '<div class="img-loading"><div class="img-spinner"></div>Analyzing image with AI (5-10s)...</div>';
-
-  wrap.appendChild(hdr);
-  wrap.appendChild(bubble);
-  row.appendChild(av);
-  row.appendChild(wrap);
-  group.appendChild(row);
-  chatEl.appendChild(group);
-  cw.scrollTop = cw.scrollHeight;
-
-  try {
-    // Timeout de 60 secondes pour Replicate (au cas où)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-    const r = await fetch(ANALYZE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        image: photoDataUrl,
-        question: question || "Describe this image in detail. What do you see? Be precise and use English."
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    const d = await r.json();
-
-    // Vérifie si c'est une erreur
-    if (d.error) {
-      throw new Error(d.error);
-    }
-
-    // Replicate retourne directement le texte (pas besoin de d.choices[0].message.content)
-    const reply = d.choices?.[0]?.message?.content || d[0] || "I couldn't analyze this image.";
-
-    bubble.innerHTML = formatMsg(reply);
-    addActions(wrap, reply);
-
-    if (messages.length === 0) {
-      document.getElementById("conv-title").textContent = displayQ.length > 45 ? displayQ.slice(0, 45) + "…" : displayQ;
-    }
-    messages.push({ role: "user", content: displayQ });
-    messages.push({ role: "assistant", content: reply });
-    if (!isGuest) persistConv();
-  } catch (err) {
-    clearTimeout(timeoutId);
-    console.error("Analysis error:", err);
-    bubble.innerHTML = "";
-    bubble.textContent = "⚠️ " + (err.message.includes("aborted") ? "Analysis took too long. Please try again." : "Could not analyze the image.");
-    bubble.style.color = "var(--red)";
-  }
-  cw.scrollTop = 999999;
+async function analyzePhoto(photoDataUrl,question){
+  const displayQ=question||"Analyze this image in detail.";
+  renderMsg("user",displayQ);
+  const chatEl=document.getElementById("chat"),cw=document.getElementById("chat-wrap");
+  hideEmpty();if(msgCount===0)addDivider("Today");msgCount++;
+  const group=document.createElement("div");group.className="msg-group";
+  const row=document.createElement("div");row.className="msg-row bot";
+  const av=document.createElement("div");av.className="msg-av bot";av.innerHTML=bhAv(28);
+  const wrap=document.createElement("div");wrap.className="msg-content";
+  const hdr=document.createElement("div");hdr.className="msg-header";
+  const sender=document.createElement("span");sender.className="msg-sender";sender.textContent="Nova";
+  const time=document.createElement("span");time.className="msg-time";time.textContent=new Date().toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
+  hdr.appendChild(sender);hdr.appendChild(time);
+  const bubble=document.createElement("div");bubble.className="bubble bot";
+  bubble.innerHTML='<div class="img-loading"><div class="img-spinner"></div>Analyzing your photo...</div>';
+  wrap.appendChild(hdr);wrap.appendChild(bubble);row.appendChild(av);row.appendChild(wrap);group.appendChild(row);chatEl.appendChild(group);cw.scrollTop=cw.scrollHeight;
+  try{
+    const r=await fetch(ANALYZE_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:photoDataUrl,question:question||"Analyze this image in detail. Describe what you see, key elements, colors, context, and anything relevant."})});
+    const d=await r.json();
+    const reply=d.choices[0].message.content;
+    bubble.innerHTML=formatMsg(reply);
+    addActions(wrap,reply);
+    if(messages.length===0)document.getElementById("conv-title").textContent=displayQ.length>45?displayQ.slice(0,45)+"…":displayQ;
+    messages.push({role:"user",content:displayQ});
+    messages.push({role:"assistant",content:reply});
+    if(!isGuest)persistConv()
+  }catch{bubble.innerHTML="";bubble.textContent="⚠️ Could not analyze the photo.";bubble.style.color="var(--red)"}
+  cw.scrollTop=999999
 }
 
 async function sendMessage(){
