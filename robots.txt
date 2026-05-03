@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://sixteleinekugel-commits.github.io/jarvis-chat/sitemap.xml
